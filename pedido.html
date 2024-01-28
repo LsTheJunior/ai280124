@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000; /* Cor de fundo preta */
+      color: #00ff00; /* Cor do texto verde */
+      font-family: 'Courier New', Courier, monospace; /* Fonte estilo computador antigo */
+    }
+
+    #game-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .message-box {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    #phase-info {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    button {
+      margin-top: 10px;
+      font-size: 16px;
+      padding: 5px 10px;
+      background-color: #000;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #00ff00;
+      color: #000;
+    }
+
+    .question {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .options button {
+      margin: 5px 0;
+    }
+  </style>
+  <title>AI 280124</title>
+</head>
+<body>
+  <div id="game-container">
+    <div id="phase-info">Fase: 0 | Perguntas Respondidas: 0/6</div>
+    <div id="question-container"></div>
+    <div id="message-container" class="message-box"></div>
+    <button id="start-button" onclick="startGame()">Iniciar Jogo</button>
+  </div>
+  <script>
+    const introductionMessage = "Este jogo foi gerado com um novo modelo de inteligência artificial, que usando uma análise probabilística pode prever o que irá acontecer, desta forma algo me diz que uma coisa muito importante irá acontecer caso você acerte todas as respostas...";
+    const finalMessage = "Parabéns! Você acertou todas as perguntas. e espero que tenha aceitado o pedido kkkkkkk";
+    const questions = [
+      {
+        question: "Quem ronca mais alto?",
+        options: ["Leticia", "Lidio", "Um javali com nariz entupido", "Um motor de Uno"],
+        correctOption: 1
+      },
+      {
+        question: "Qual frase a Leticia fala diariamente?",
+        options: ["To animadinha", "To molinha", "to Felizinha", "to muito vascaína"],
+        correctOption: 1
+      },
+      {
+        question: "Qual casal tem a combinação perfeita de audição ruim e dicção péssima?",
+        options: ["Chico moedas e Luisa Sonza", "Romeu e Julieta", "Leticia e Lidio", "Virgina e Zé Felipe"],
+        correctOption: 2
+      },
+      {
+        question: "O que siginifica a palavra intermistase? (kkkkkk)",
+        options: ["uma geladeira duas portas", "Uma AirFryer", "O Universo", "uma ave rara"],
+        correctOption: 2
+      },
+      {
+        question: "Qual musica estava tocando quando dissemos eu te amo?",
+        options: ["Por onde andei - Nando Reis", "MC GW - Atura ou surta 2", "Restart - Recomeçar", "Taylor Swift - 22"],
+        correctOption: 0
+      },
+      {
+        question: "Agora a mais importante... qual o maior time do mundo?",
+        options: ["Real Madrid", "Palmeiras", "Flamengo", "Vasco"],
+        correctOption: 3
+      }
+    ];
+
+    const phrases = [
+      "Como o primeiro encontro, nossa jornada começa, cheia de sorrisos e descobertas...",
+      "Assim como superamos desafios juntos, o jogo avança, refletindo nossas superações na vida real...",
+      "Cada obstáculo vencido é como os obstáculos que superamos, fortalecendo nossa conexão a cada passo...",
+      "Como em nossa relação, a confiança se fortalece, revelando novas dimensões dessa história que construímos juntos...",
+      "Assim como o crescimento individual é essencial, cada fase do jogo reflete nossas jornadas paralelas, convergindo para um momento especial...",
+      "Nossa jornada virtual chega ao ápice, mas é no mundo real que quero continuar essa aventura. Leticia você quer... ... ... não melhor deixar o Lídio mesmo dizer..."
+    ];
+
+    let currentPhase = 0;
+    let questionsAnswered = 0;
+    const questionsToAnswer = questions.length;
+    let letterInterval;
+
+    function startGame() {
+      document.getElementById('start-button').style.display = 'none';
+      showIntroduction();
+    }
+
+    function showIntroduction() {
+      const messageBox = document.getElementById('message-container');
+      messageBox.innerHTML = '';
+      messageBox.classList.add('message-box');
+
+      let index = 0;
+      letterInterval = setInterval(() => {
+        if (index < introductionMessage.length) {
+          messageBox.innerHTML += `<span>${introductionMessage.charAt(index)}</span>`;
+          index++;
+        } else {
+          clearInterval(letterInterval);
+          setTimeout(() => {
+            messageBox.innerHTML = '';
+            askQuestion();
+          }, 8000); // Exibir a mensagem por 8 segundos antes de começar o jogo (ajuste conforme necessário)
+        }
+      }, 100); // Intervalo de 100ms para gerar letra por letra
+    }
+
+    function askQuestion() {
+      if (questionsAnswered < questionsToAnswer) {
+        const questionContainer = document.getElementById('question-container');
+        questionContainer.innerHTML = '';
+
+        const questionElement = document.createElement('div');
+        questionElement.textContent = questions[questionsAnswered].question;
+        questionElement.classList.add('question');
+        questionContainer.appendChild(questionElement);
+
+        const optionsElement = document.createElement('div');
+        optionsElement.classList.add('options');
+
+        for (let i = 0; i < questions[questionsAnswered].options.length; i++) {
+          const option = document.createElement('button');
+          option.textContent = questions[questionsAnswered].options[i];
+          option.addEventListener('click', () => checkAnswer(i));
+          optionsElement.appendChild(option);
+        }
+
+        questionContainer.appendChild(optionsElement);
+      }
+    }
+
+    function checkAnswer(selectedOption) {
+      clearInterval(letterInterval); // Para a animação de letras
+      if (selectedOption === questions[questionsAnswered].correctOption) {
+        showMessageBox(phrases[currentPhase], () => {
+          if (questionsAnswered === questionsToAnswer - 1) {
+            // Última pergunta, permanece na última fase
+            document.getElementById('phase-info').textContent = `Fase: ${currentPhase + 1} | Perguntas Respondidas: ${questionsAnswered + 1}/${questionsToAnswer}`;
+            showMessageBox(phrases[currentPhase], showFinalMessage); // Exibir a frase e mensagem final
+          } else {
+            currentPhase++;
+            questionsAnswered++;
+            document.getElementById('phase-info').textContent = `Fase: ${currentPhase + 1} | Perguntas Respondidas: ${questionsAnswered}/${questionsToAnswer}`;
+            askQuestion();
+          }
+        });
+      } else {
+       
+          resetGame();
+        
+      }
+    }
+
+    function showMessageBox(message, callback) {
+      const messageBox = document.getElementById('message-container');
+      messageBox.innerHTML = '';
+      messageBox.classList.add('message-box');
+
+      let index = 0;
+      const intervalId = setInterval(() => {
+        if (index < message.length) {
+          messageBox.innerHTML += `<span>${message.charAt(index)}</span>`;
+          index++;
+        } else {
+          clearInterval(intervalId);
+          setTimeout(() => {
+            messageBox.innerHTML = '';
+            if (callback) {
+              callback();
+            }
+          }, 4000); // Exibir a mensagem por 2 segundos (ajuste conforme necessário)
+        }
+      }, 100); // Intervalo de 100ms para gerar letra por letra
+    }
+
+    function showFinalMessage() {
+      const messageBox = document.getElementById('message-container');
+      messageBox.classList.add('message-box');
+      messageBox.innerHTML = '';
+
+      let index = 0;
+      letterInterval = setInterval(() => {
+        if (index < finalMessage.length) {
+          messageBox.innerHTML += `<span>${finalMessage.charAt(index)}</span>`;
+          index++;
+        }
+      }, 100); // Intervalo de 100ms para gerar letra por letra
+    }
+
+    function resetGame() {
+      currentPhase = 0;
+      showMessageBox("Resposta incorreta. Como em nossa relação sempre podemos recomeçar após um erro...", () => {
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  });
+    }
+  </script>
+</body>
+</html>
