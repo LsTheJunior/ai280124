@@ -7,9 +7,9 @@
     body {
       margin: 0;
       overflow: hidden;
-      background-color: #000; /* Cor de fundo preta */
-      color: #00ff00; /* Cor do texto verde */
-      font-family: 'Courier New', Courier, monospace; /* Fonte estilo computador antigo */
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
     }
 
     #game-container {
@@ -27,9 +27,9 @@
       font-size: 18px;
     }
 
-    #phase-info {
-      margin-top: 10px;
-      font-size: 18px;
+    #start-buttons {
+      display: flex;
+      gap: 20px;
     }
 
     button {
@@ -65,15 +65,20 @@
 </head>
 <body>
   <div id="game-container">
-    <div id="phase-info">Fase: 0 | Perguntas Respondidas: 0/6</div>
     <div id="question-container"></div>
     <div id="message-container" class="message-box"></div>
-    <button id="start-button" onclick="startGame()">Iniciar Jogo</button>
+    
+    <div id="start-buttons">
+      <button id="fase1-button" onclick="startPhase1()">Fase 1</button>
+      <button id="fase2-button" onclick="startPhase2()">Fase 2</button>
+    </div>
   </div>
+
   <script>
     const introductionMessage = "Este jogo foi gerado com um novo modelo de inteligência artificial, que usando uma análise probabilística pode prever o que irá acontecer, desta forma algo me diz que uma coisa muito importante irá acontecer caso você acerte todas as respostas...";
     const finalMessage = "Parabéns! Você acertou todas as perguntas. e espero que tenha aceitado o pedido kkkkkkk";
-    const questions = [
+    const finalMessage2 = "Parabéns! Você acertou todas as perguntas. vejo você na próxima fase..."
+    const phase1Questions = [
       {
         question: "Quem ronca mais alto?",
         options: ["Leticia", "Lidio", "Um javali com nariz entupido", "Um motor de Uno"],
@@ -106,23 +111,68 @@
       }
     ];
 
-    const phrases = [
-      "Como o primeiro encontro, nossa jornada começa, cheia de sorrisos e descobertas...",
-      "Assim como superamos desafios juntos, o jogo avança, refletindo nossas superações na vida real...",
-      "Cada obstáculo vencido é como os obstáculos que superamos, fortalecendo nossa conexão a cada passo...",
-      "Como em nossa relação, a confiança se fortalece, revelando novas dimensões dessa história que construímos juntos...",
-      "Assim como o crescimento individual é essencial, cada fase do jogo reflete nossas jornadas paralelas, convergindo para um momento especial...",
-      "Nossa jornada virtual chega ao ápice, mas é no mundo real que quero continuar essa aventura. Leticia você quer... ... ... não melhor deixar o Lídio mesmo dizer..."
+    const phase2Questions = [
+      {
+        question: "O que eu mais ouvi durante esse um ano? ",
+        options: ["Quer uma almofada?", "Lidioooco...", "Água!", "Te amo"],
+        correctOption: 3
+      },
+      {
+        question: "O que não pode faltar no nosso casamento de 300 convidados?",
+        options: ["Bolo", "Coxinha", "Bem casado", "Alianças"],
+        correctOption: 1
+      },
+      {
+        question: "Qual sua comida favorita?",
+        options: ["Trufa", "Mandioco rsrs", "Temaki", "Pastel"],
+        correctOption: 1
+      },
+      {
+        question: "O que eu faria se ganhasse na mega sena?",
+        options: ["Pararia de trabalhar", "Abriria uma empresa", "Viajaria o mundo", "Ja ganhei no dia 28/01/2024"],
+        correctOption: 3
+      },
+      {
+        question: "O que eu mais admiro em você?",
+        options: ["Inteligencia", "Empatia", "Cadillac", "Todas as anteriores"],
+        correctOption: 3
+      },
+      {
+        question: "Qual vai ser o time da Livia?",
+        options: ["Corinthians", "Palmeiras", "Vasco", "São Paulo"],
+        correctOption: 2
+      }
     ];
 
-    let currentPhase = 0;
-    let questionsAnswered = 0;
-    const questionsToAnswer = questions.length;
-    let letterInterval;
+    const phase2Texts = [
+      "Bem vinda de volta! parabéns por ter chegado até aqui, nosso primeiro ano foi como um livro em que cada página revela uma nova descoberta. Superamos obstáculos, entrelaçamos nossos sonhos e aprendemos a ser um só. Cada sorriso, cada olhar, cada palavra foi um fio que fortaleceu o tecido da nossa história. E assim, seguimos, mais unidos e prontos para os próximos capítulos.",
+      "Um ano se passou e, com ele, o nosso amor se transformou em uma dança de descobertas. Em cada passo, crescemos e aprendemos a nos compreender de uma maneira única. O amor se revela nas pequenas conquistas diárias, nos gestos que não precisam de palavras e nos momentos silenciosos, mas cheios de significado.",
+      "Neste primeiro ano, fomos como dois rios que antes seguiam rumos distintos mas passaram a encontrar forças no mesmo leito. Juntos, nos apoiamos, e descobrimos que o amor é uma arte feita de paciência e cumplicidade. A cada desafio, nosso laço se tornava mais forte, mais eterno.",
+      "Como toda grande jornada, tivemos nossas dificuldades, mas nunca nos faltou coragem para seguir. Cada obstáculo foi uma oportunidade de nos reerguermos, mais unidos e mais fortes. E o que parecia ser um desafio, se tornou a nossa mais bela conquista: a certeza de que, juntos, somos imbatíveis.",
+      "Em um ano, vivemos o que muitos levam uma vida inteira para entender. Cada risada compartilhada, cada abraço apertado, cada momento de apoio construíram a essência do nosso amor. E agora, mais fortes, sabemos que o futuro é uma tela em branco, pronta para ser pintada com as cores das nossas conquistas.",
+      "Faz um ano que decidimos conectar as nossas almas e, desde então, cada segundo ao teu lado tem sido um reflexo de tudo o que somos e de tudo o que podemos ser. O que começou como um simples encontro, se transformou na nossa mais bela história, construída com amor, entrega e paixão. E assim, seguimos, sabendo que o melhor ainda está por vir... "
+    ];
 
-    function startGame() {
-      document.getElementById('start-button').style.display = 'none';
+    let currentPhase = 1;
+    let questionsAnswered = 0;
+    const questionsToAnswer = phase1Questions.length;
+    let letterInterval;
+    let phase2TextIndex = 0;
+
+    function startPhase1() {
+      document.getElementById('fase1-button').style.display = 'none';
+      document.getElementById('fase2-button').style.display = 'none';
+      currentPhase = 1;
       showIntroduction();
+    }
+
+    function startPhase2() {
+      document.getElementById('fase1-button').style.display = 'none';
+      document.getElementById('fase2-button').style.display = 'none';
+      currentPhase = 2;
+      questionsAnswered = 0;
+      phase2TextIndex = 0;
+      showPhase2Text(); // Exibe o primeiro texto antes da primeira questão
     }
 
     function showIntroduction() {
@@ -139,29 +189,51 @@
           clearInterval(letterInterval);
           setTimeout(() => {
             messageBox.innerHTML = '';
-            askQuestion();
-          }, 8000); // Exibir a mensagem por 8 segundos antes de começar o jogo (ajuste conforme necessário)
+            askQuestionPhase1();
+          }, 8000); 
         }
-      }, 100); // Intervalo de 100ms para gerar letra por letra
+      }, 100); 
     }
 
-    function askQuestion() {
+    function showPhase2Text() {
+      if (phase2TextIndex < phase2Texts.length) {
+        const messageBox = document.getElementById('message-container');
+        messageBox.innerHTML = '';
+        messageBox.classList.add('message-box');
+
+        let index = 0;
+        letterInterval = setInterval(() => {
+          if (index < phase2Texts[phase2TextIndex].length) {
+            messageBox.innerHTML += `<span>${phase2Texts[phase2TextIndex].charAt(index)}</span>`;
+            index++;
+          } else {
+            clearInterval(letterInterval);
+            setTimeout(() => {
+              messageBox.innerHTML = '';
+              askQuestionPhase2();
+            }, 4000);
+          }
+        }, 100);
+      }
+    }
+
+    function askQuestionPhase1() {
       if (questionsAnswered < questionsToAnswer) {
         const questionContainer = document.getElementById('question-container');
         questionContainer.innerHTML = '';
 
         const questionElement = document.createElement('div');
-        questionElement.textContent = questions[questionsAnswered].question;
+        questionElement.textContent = phase1Questions[questionsAnswered].question;
         questionElement.classList.add('question');
         questionContainer.appendChild(questionElement);
 
         const optionsElement = document.createElement('div');
         optionsElement.classList.add('options');
 
-        for (let i = 0; i < questions[questionsAnswered].options.length; i++) {
+        for (let i = 0; i < phase1Questions[questionsAnswered].options.length; i++) {
           const option = document.createElement('button');
-          option.textContent = questions[questionsAnswered].options[i];
-          option.addEventListener('click', () => checkAnswer(i));
+          option.textContent = phase1Questions[questionsAnswered].options[i];
+          option.addEventListener('click', () => checkAnswerPhase1(i));
           optionsElement.appendChild(option);
         }
 
@@ -169,26 +241,96 @@
       }
     }
 
-    function checkAnswer(selectedOption) {
-      clearInterval(letterInterval); // Para a animação de letras
-      if (selectedOption === questions[questionsAnswered].correctOption) {
-        showMessageBox(phrases[currentPhase], () => {
-          if (questionsAnswered === questionsToAnswer - 1) {
-            // Última pergunta, permanece na última fase
-            document.getElementById('phase-info').textContent = `Fase: ${currentPhase + 1} | Perguntas Respondidas: ${questionsAnswered + 1}/${questionsToAnswer}`;
-            showMessageBox(phrases[currentPhase], showFinalMessage); // Exibir a frase e mensagem final
-          } else {
-            currentPhase++;
-            questionsAnswered++;
-            document.getElementById('phase-info').textContent = `Fase: ${currentPhase + 1} | Perguntas Respondidas: ${questionsAnswered}/${questionsToAnswer}`;
-            askQuestion();
-          }
-        });
-      } else {
-       
-          resetGame();
-        
+    function askQuestionPhase2() {
+      if (questionsAnswered < phase2Questions.length) {
+        const questionContainer = document.getElementById('question-container');
+        questionContainer.innerHTML = '';
+
+        const questionElement = document.createElement('div');
+        questionElement.textContent = phase2Questions[questionsAnswered].question;
+        questionElement.classList.add('question');
+        questionContainer.appendChild(questionElement);
+
+        const optionsElement = document.createElement('div');
+        optionsElement.classList.add('options');
+
+        for (let i = 0; i < phase2Questions[questionsAnswered].options.length; i++) {
+          const option = document.createElement('button');
+          option.textContent = phase2Questions[questionsAnswered].options[i];
+          option.addEventListener('click', () => checkAnswerPhase2(i));
+          optionsElement.appendChild(option);
+        }
+
+        questionContainer.appendChild(optionsElement);
       }
+    }
+
+    function checkAnswerPhase1(selectedOption) {
+      if (selectedOption === phase1Questions[questionsAnswered].correctOption) {
+        questionsAnswered++;
+        if (questionsAnswered < questionsToAnswer) {
+          askQuestionPhase1();
+        } else {
+          showFinalMessage();
+        }
+      } else {
+        resetGame();
+      }
+    }
+
+    function checkAnswerPhase2(selectedOption) {
+      if (selectedOption === phase2Questions[questionsAnswered].correctOption) {
+        questionsAnswered++;
+        if (questionsAnswered < phase2Questions.length) {
+          phase2TextIndex++; // Exibe o próximo texto da lista
+          showPhase2Text();
+        } else {
+          showFinalMessage2();
+        }
+      } else {
+        resetGame();
+      }
+    }
+
+    function showFinalMessage() {
+      const messageBox = document.getElementById('message-container');
+      messageBox.classList.add('message-box');
+      messageBox.innerHTML = '';
+
+      let index = 0;
+      letterInterval = setInterval(() => {
+        if (index < finalMessage.length) {
+          messageBox.innerHTML += `<span>${finalMessage.charAt(index)}</span>`;
+          index++;
+        } else {
+          clearInterval(letterInterval);
+        }
+      }, 100); 
+    }
+	
+     function showFinalMessage2() {
+      const messageBox = document.getElementById('message-container');
+      messageBox.classList.add('message-box');
+      messageBox.innerHTML = '';
+
+      let index = 0;
+      letterInterval = setInterval(() => {
+        if (index < finalMessage2.length) {
+          messageBox.innerHTML += `<span>${finalMessage2.charAt(index)}</span>`;
+          index++;
+        } else {
+          clearInterval(letterInterval);
+        }
+      }, 100); 
+    }
+    function resetGame() {
+      questionsAnswered = 0;
+      currentPhase = 1;
+      showMessageBox("Resposta incorreta. Como em nossa relação sempre podemos recomeçar após um erro...", () => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      });
     }
 
     function showMessageBox(message, callback) {
@@ -208,32 +350,9 @@
             if (callback) {
               callback();
             }
-          }, 4000); // Exibir a mensagem por 2 segundos (ajuste conforme necessário)
+          }, 4000); 
         }
-      }, 100); // Intervalo de 100ms para gerar letra por letra
-    }
-
-    function showFinalMessage() {
-      const messageBox = document.getElementById('message-container');
-      messageBox.classList.add('message-box');
-      messageBox.innerHTML = '';
-
-      let index = 0;
-      letterInterval = setInterval(() => {
-        if (index < finalMessage.length) {
-          messageBox.innerHTML += `<span>${finalMessage.charAt(index)}</span>`;
-          index++;
-        }
-      }, 100); // Intervalo de 100ms para gerar letra por letra
-    }
-
-    function resetGame() {
-      currentPhase = 0;
-      showMessageBox("Resposta incorreta. Como em nossa relação sempre podemos recomeçar após um erro...", () => {
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
-  });
+      }, 100); 
     }
   </script>
 </body>
